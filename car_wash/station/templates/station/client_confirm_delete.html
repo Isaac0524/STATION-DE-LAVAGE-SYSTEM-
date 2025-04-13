@@ -1,0 +1,30 @@
+ 
+{% extends 'station/base.html' %}
+
+{% block title %}Supprimer un client - Auto Wash Pro{% endblock %}
+
+{% block content %}
+<section class="p-6">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold">Confirmer la suppression</h1>
+    </div>
+    
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div class="p-6">
+            <p class="mb-6">Êtes-vous sûr de vouloir supprimer le client <strong>{{ client.name }}</strong> ?</p>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="flex justify-end space-x-3">
+                    <a href="{% url 'client_list' %}" class="py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">
+                        Annuler
+                    </a>
+                    <button type="submit" class="py-2 px-4 bg-red-600 hover:bg-red-700 text-white rounded-md">
+                        Confirmer la suppression
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

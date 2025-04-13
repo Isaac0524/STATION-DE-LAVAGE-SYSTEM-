@@ -1,0 +1,81 @@
+ 
+{% extends 'station/base.html' %}
+
+{% block title %}{% if form.instance.id %}Modifier{% else %}Nouvel{% endif %} Employé | Auto Wash Pro{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">{% if form.instance.id %}Modifier{% else %}Nouvel{% endif %} Employé</h1>
+        <a href="{% url 'employee_list' %}" class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 py-2 px-4 rounded-md transition duration-200">
+            Retour à la liste
+        </a>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label for="{{ form.name.id_for_label }}" class="block text-sm font-medium">{{ form.name.label }}</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.name.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="space-y-2">
+                    <label for="{{ form.role.id_for_label }}" class="block text-sm font-medium">{{ form.role.label }}</label>
+                    {{ form.role }}
+                    {% if form.role.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.role.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="space-y-2">
+                    <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium">{{ form.email.label }}</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.email.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="space-y-2">
+                    <label for="{{ form.phone.id_for_label }}" class="block text-sm font-medium">{{ form.phone.label }}</label>
+                    {{ form.phone }}
+                    {% if form.phone.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.phone.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="space-y-2">
+                    <label for="{{ form.hire_date.id_for_label }}" class="block text-sm font-medium">{{ form.hire_date.label }}</label>
+                    {{ form.hire_date }}
+                    {% if form.hire_date.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.hire_date.errors }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="flex items-center">
+                <div class="flex items-center h-5">
+                    {{ form.is_active }}
+                </div>
+                <div class="ml-3 text-sm">
+                    <label for="{{ form.is_active.id_for_label }}" class="font-medium">{{ form.is_active.label }}</label>
+                </div>
+                {% if form.is_active.errors %}
+                <p class="text-red-500 text-xs ml-3">{{ form.is_active.errors }}</p>
+                {% endif %}
+            </div>
+
+            <div class="flex justify-end pt-4">
+                <button type="submit" class="bg-primary hover:bg-primaryDark text-white py-2 px-6 rounded-md transition duration-200">
+                    {% if form.instance.id %}Mettre à jour{% else %}Enregistrer{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

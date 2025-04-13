@@ -1,0 +1,89 @@
+{% extends 'station/base.html' %}
+
+{% block title %}Ajouter un client - Auto Wash Pro{% endblock %}
+
+{% block content %}
+<section class="p-6">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Ajouter un client</h1>
+    </div>
+    
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Première rangée -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="id_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nom <span class="text-red-500">*</span></label>
+                    <input type="text" name="name" id="id_name" required class="w-full px-4 py-2 rounded-md border-2 border-black dark:border-white bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    {% if form.name.errors %}
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ form.name.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="id_email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                    <input type="email" name="email" id="id_email" class="w-full px-4 py-2 rounded-md border-2 border-black dark:border-white bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    {% if form.email.errors %}
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ form.email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Deuxième rangée -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="id_phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Téléphone <span class="text-red-500">*</span></label>
+                    <input type="tel" name="phone" id="id_phone" required class="w-full px-4 py-2 rounded-md border-2 border-black dark:border-white bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    {% if form.phone.errors %}
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ form.phone.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="id_car_model" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Modèle de voiture</label>
+                    <input type="text" name="car_model" id="id_car_model" class="w-full px-4 py-2 rounded-md border-2 border-black dark:border-white bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    {% if form.car_model.errors %}
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ form.car_model.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Troisième rangée -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="id_license_plate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Immatriculation <span class="text-red-500">*</span></label>
+                    <input type="text" name="license_plate" id="id_license_plate" required class="uppercase w-full px-4 py-2 rounded-md border-2 border-black dark:border-white bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    {% if form.license_plate.errors %}
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ form.license_plate.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Boutons d'action -->
+            <div class="flex justify-end space-x-4 pt-4">
+                <a href="{% url 'client_list' %}" class="px-6 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-md border-2 border-black dark:border-gray-500 focus:outline-none">
+                    Annuler
+                </a>
+                <button type="submit" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md border-2 border-black dark:border-gray-600 focus:outline-none">
+                    Sauvegarder
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block script_footer %}
+{{ block.super }}
+<script>
+    // Pour l'immatriculation, on force en majuscules
+    const licensePlateInput = document.getElementById('id_license_plate');
+    if (licensePlateInput) {
+        licensePlateInput.addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+        });
+    }
+</script>
+{% endblock %}

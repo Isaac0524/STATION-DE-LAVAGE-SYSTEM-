@@ -1,0 +1,166 @@
+ 
+{% extends 'station/base.html' %}
+
+{% block title %}Gestion des Rendez-vous - Auto Wash Pro{% endblock %}
+
+{% block content %}
+<section class="p-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Gestion des Rendez-vous</h1>
+        <a href="{% url 'appointment_create' %}" class="bg-primary hover:bg-primaryDark text-white py-2 px-4 rounded-md flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            Ajouter un rendez-vous
+        </a>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 border border-gray-200 dark:border-gray-700 mb-6">
+        <form method="get" class="flex flex-col md:flex-row md:items-center space-y-3 md:space-y-0 md:space-x-4">
+            <div class="relative flex-1">
+                <input type="date" name="date" id="appointmentDate" value="{{ filter_date|default:'' }}" class="w-full py-2 px-4 text-base border rounded-md dark:border-gray-600 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primaryLight">
+            </div>
+            <div class="flex space-x-2">
+                <select name="status" id="appointmentStatus" class="py-2 px-4 border rounded-md dark:border-gray-600 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primaryLight text-base">
+                    <option value="all" {% if filter_status == 'all' or not filter_status %}selected{% endif %}>Tous les statuts</option>
+                    <option value="scheduled" {% if filter_status == 'scheduled' %}selected{% endif %}>À venir</option>
+                    <option value="in_progress" {% if filter_status == 'in_progress' %}selected{% endif %}>En cours</option>
+                    <option value="completed" {% if filter_status == 'completed' %}selected{% endif %}>Terminés</option>
+                    <option value="cancelled" {% if filter_status == 'cancelled' %}selected{% endif %}>Annulés</option>
+                </select>
+                <button type="submit" id="searchAppointment" class="py-2 px-4 bg-primary hover:bg-primaryDark text-white rounded-md">
+                    Filtrer
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Today's Appointments -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
+            <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+                <h3 class="text-lg font-semibold">Aujourd'hui</h3>
+            </div>
+            <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                {% for appointment in today_appointments %}
+                <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h4 class="font-semibold">{{ appointment.client.name }}</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">{{ appointment.client.car_model }} - {{ appointment.client.license_plate }}</p>
+                        </div>
+                        <span class="px-2 py-1 text-xs rounded-full 
+                            {% if appointment.status == 'completed' %}bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200
+                            {% elif appointment.status == 'in_progress' %}bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200
+                            {% elif appointment.status == 'scheduled' %}bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200
+                            {% else %}bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200{% endif %}">
+                            {{ appointment.get_status_display }}
+                        </span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-1 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>{{ appointment.time|time:"H:i" }}</span>
+                        </div>
+                        <div>{{ appointment.service.name }}</div>
+                    </div>
+                    <div class="mt-2 flex justify-end space-x-2">
+                        <a href="{% url 'appointment_edit' appointment.pk %}" class="text-xs text-primary hover:text-primaryDark dark:hover:text-primaryLight">Modifier</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="p-4 text-center text-gray-500 dark:text-gray-400">
+                    Aucun rendez-vous aujourd'hui
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Tomorrow's Appointments -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
+            <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+                <h3 class="text-lg font-semibold">Demain</h3>
+            </div>
+            <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                {% for appointment in tomorrow_appointments %}
+                <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h4 class="font-semibold">{{ appointment.client.name }}</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">{{ appointment.client.car_model }} - {{ appointment.client.license_plate }}</p>
+                        </div>
+                        <span class="px-2 py-1 text-xs rounded-full 
+                            {% if appointment.status == 'completed' %}bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200
+                            {% elif appointment.status == 'in_progress' %}bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200
+                            {% elif appointment.status == 'scheduled' %}bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200
+                            {% else %}bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200{% endif %}">
+                            {{ appointment.get_status_display }}
+                        </span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-1 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>{{ appointment.time|time:"H:i" }}</span>
+                        </div>
+                        <div>{{ appointment.service.name }}</div>
+                    </div>
+                    <div class="mt-2 flex justify-end space-x-2">
+                        <a href="{% url 'appointment_edit' appointment.pk %}" class="text-xs text-primary hover:text-primaryDark dark:hover:text-primaryLight">Modifier</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="p-4 text-center text-gray-500 dark:text-gray-400">
+                    Aucun rendez-vous demain
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- This Week's Appointments -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
+            <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+                <h3 class="text-lg font-semibold">Cette semaine</h3>
+            </div>
+            <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                {% for appointment in week_appointments %}
+                <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h4 class="font-semibold">{{ appointment.client.name }}</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">{{ appointment.client.car_model }} - {{ appointment.client.license_plate }}</p>
+                        </div>
+                        <span class="px-2 py-1 text-xs rounded-full 
+                            {% if appointment.status == 'completed' %}bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200
+                            {% elif appointment.status == 'in_progress' %}bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200
+                            {% elif appointment.status == 'scheduled' %}bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200
+                            {% else %}bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200{% endif %}">
+                            {{ appointment.get_status_display }}
+                        </span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-1 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>{{ appointment.date|date:"l" }}, {{ appointment.time|time:"H:i" }}</span>
+                        </div>
+                        <div>{{ appointment.service.name }}</div>
+                    </div>
+                    <div class="mt-2 flex justify-end space-x-2">
+                        <a href="{% url 'appointment_edit' appointment.pk %}" class="text-xs text-primary hover:text-primaryDark dark:hover:text-primaryLight">Modifier</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="p-4 text-center text-gray-500 dark:text-gray-400">
+                    Aucun rendez-vous cette semaine
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

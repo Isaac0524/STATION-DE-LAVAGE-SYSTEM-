@@ -1,0 +1,84 @@
+{% extends 'station/base.html' %}
+
+{% block title %}{% if form.instance.id %}Modifier{% else %}Nouveau{% endif %} Rendez-vous | Auto Wash Pro{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">{% if form.instance.id %}Modifier{% else %}Nouveau{% endif %} Rendez-vous</h1>
+        <a href="{% url 'appointment_list' %}" class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 py-2 px-4 rounded-md transition duration-200">
+            Retour à la liste
+        </a>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label for="{{ form.client.id_for_label }}" class="block text-sm font-medium">{{ form.client.label }}</label>
+                    {{ form.client }}
+                    {% if form.client.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.client.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="space-y-2">
+                    <label for="{{ form.service.id_for_label }}" class="block text-sm font-medium">{{ form.service.label }}</label>
+                    {{ form.service }}
+                    {% if form.service.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.service.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="space-y-2">
+                    <label for="{{ form.employee.id_for_label }}" class="block text-sm font-medium">{{ form.employee.label }}</label>
+                    {{ form.employee }}
+                    {% if form.employee.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.employee.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="space-y-2">
+                    <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium">{{ form.status.label }}</label>
+                    {{ form.status }}
+                    {% if form.status.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.status.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="space-y-2">
+                    <label for="{{ form.date.id_for_label }}" class="block text-sm font-medium">{{ form.date.label }}</label>
+                    {{ form.date }}
+                    {% if form.date.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.date.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="space-y-2">
+                    <label for="{{ form.time.id_for_label }}" class="block text-sm font-medium">{{ form.time.label }}</label>
+                    {{ form.time }}
+                    {% if form.time.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.time.errors }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label for="{{ form.notes.id_for_label }}" class="block text-sm font-medium">{{ form.notes.label }}</label>
+                {{ form.notes }}
+                {% if form.notes.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.notes.errors }}</p>
+                {% endif %}
+            </div>
+
+            <div class="flex justify-end pt-4">
+                <button type="submit" class="bg-primary hover:bg-primaryDark text-white py-2 px-6 rounded-md transition duration-200">
+                    {% if form.instance.id %}Mettre à jour{% else %}Enregistrer{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
